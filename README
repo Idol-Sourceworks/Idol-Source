@@ -1,20 +1,20 @@
-Features
------------------------
 
+Features
 - Source Shader Editor integration
 - Support for VS 2010-13 + 2019
-- HL2, Portal, Deferred project templates
+- HL2, Deferred project templates (soon to merge)
 - Fixed Hammer Editor
 - Updated engine binaries
 
+-----------------------
+
 Requirements
+-MFC Multibyte library for Visual Studio (2013 and below)
+-(Included in the Desktop Development with C++ extension for future VS versions.)
+
 -----------------------
 
--MFC Multibyte library for Visual Studio
-
-Contributors
------------------------
-
+Using Enhanced Source by these individuals:
 - reepblue
 - Joshua Ashton
 - DankParrot
@@ -24,3 +24,5 @@ Contributors
 - DasMaddi
 - Practical Problems
 - Ethan
+
+-----------------------
