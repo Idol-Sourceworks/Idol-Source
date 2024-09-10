@@ -1,7 +1,7 @@
 "GameInfo"
 {
-	game 		"Deferred Example"
-	title 		"Deferred Example"
+	game 		"Half-Life 2"
+	title 		"Half-Life 2"
 	type		singleplayer_only
 
         "icon"		"game"
@@ -36,6 +36,21 @@
 		//
 		SearchPaths
 		{
+			// Look for our content under our gamepath. pak01_dir will be read first, then loose files.
+			Game				|gameinfo_path|.
+			
+			// Load hl2 content (you can copy this from SFM, build your own, or ignore it)
+			Game				hl2
+			
+			// This has some resources.
+			Game				template_additional_content
+
+			// Like the Source 2006 base, you need to include this folder as it has ALL of the content that is mostly shared.
+			Game				core
+
+			// The platform folder, has the stuff to make the engine run.
+			Game				platform
+
 			// Look for our content under our gamepath. pak01_dir will be read first, then loose files.
 			Game				|gameinfo_path|.
 

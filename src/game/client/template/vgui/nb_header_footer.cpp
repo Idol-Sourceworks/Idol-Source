@@ -11,18 +11,18 @@
 
 using namespace vgui;
 
-CASW_Background_Movie *g_pBackgroundMovie = NULL;
+CHL2_Background_Movie* g_pBackgroundMovie = NULL;
 
-CASW_Background_Movie* ASWBackgroundMovie()
+CHL2_Background_Movie* HL2BackgroundMovie()
 {
-	if ( !g_pBackgroundMovie )
+	if (!g_pBackgroundMovie)
 	{
-		g_pBackgroundMovie = new CASW_Background_Movie();
+		g_pBackgroundMovie = new CHL2_Background_Movie();
 	}
 	return g_pBackgroundMovie;
 }
 
-CASW_Background_Movie::CASW_Background_Movie()
+CHL2_Background_Movie::CHL2_Background_Movie()
 {
 #ifdef ASW_BINK_MOVIES
 	m_nBIKMaterial = BIKMATERIAL_INVALID;
@@ -34,167 +34,167 @@ CASW_Background_Movie::CASW_Background_Movie()
 	m_nLastGameState = -1;
 }
 
-CASW_Background_Movie::~CASW_Background_Movie()
+CHL2_Background_Movie::~CHL2_Background_Movie()
 {
 
 }
 
-void CASW_Background_Movie::SetCurrentMovie( const char *szFilename )
+void CHL2_Background_Movie::SetCurrentMovie(const char* szFilename)
 {
-	if ( Q_strcmp( m_szCurrentMovie, szFilename ) )
+	if (Q_strcmp(m_szCurrentMovie, szFilename))
 	{
 #ifdef ASW_BINK_MOVIES
-		if ( m_nBIKMaterial != BIKMATERIAL_INVALID )
+		if (m_nBIKMaterial != BIKMATERIAL_INVALID)
 		{
 			// FIXME: Make sure the m_pMaterial is actually destroyed at this point!
-			g_pBIK->DestroyMaterial( m_nBIKMaterial );
+			g_pBIK->DestroyMaterial(m_nBIKMaterial);
 			m_nBIKMaterial = BIKMATERIAL_INVALID;
 			m_nTextureID = -1;
 		}
 
-		char szMaterialName[ MAX_PATH ];
-		Q_snprintf( szMaterialName, sizeof( szMaterialName ), "BackgroundBIKMaterial%i", g_pBIK->GetGlobalMaterialAllocationNumber() );
-		m_nBIKMaterial = bik->CreateMaterial( szMaterialName, szFilename, "GAME", BIK_LOOP );
+		char szMaterialName[MAX_PATH];
+		Q_snprintf(szMaterialName, sizeof(szMaterialName), "BackgroundBIKMaterial%i", g_pBIK->GetGlobalMaterialAllocationNumber());
+		m_nBIKMaterial = bik->CreateMaterial(szMaterialName, szFilename, "GAME", BIK_LOOP);
 #else
-		if ( m_nAVIMaterial != AVIMATERIAL_INVALID )
+		if (m_nAVIMaterial != AVIMATERIAL_INVALID)
 		{
 			// FIXME: Make sure the m_pMaterial is actually destroyed at this point!
-			g_pAVI->DestroyAVIMaterial( m_nAVIMaterial );
+			g_pAVI->DestroyAVIMaterial(m_nAVIMaterial);
 			m_nAVIMaterial = AVIMATERIAL_INVALID;
 			m_nTextureID = -1;
 		}
 
-		char szMaterialName[ MAX_PATH ];
+		char szMaterialName[MAX_PATH];
 		static int g_nGlobalAVIAllocationCount = 0;
-		Q_snprintf( szMaterialName, sizeof( szMaterialName ), "BackgroundAVIMaterial%i", g_nGlobalAVIAllocationCount++ );
-		m_nAVIMaterial = g_pAVI->CreateAVIMaterial( szMaterialName, szFilename, "GAME" );
+		Q_snprintf(szMaterialName, sizeof(szMaterialName), "BackgroundAVIMaterial%i", g_nGlobalAVIAllocationCount++);
+		m_nAVIMaterial = g_pAVI->CreateAVIMaterial(szMaterialName, szFilename, "GAME");
 		m_flStartTime = gpGlobals->realtime;
 
-		IMaterial *pMaterial = avi->GetMaterial( m_nAVIMaterial );
+		IMaterial* pMaterial = avi->GetMaterial(m_nAVIMaterial);
 		pMaterial->IncrementReferenceCount();
 #endif
 
-		Q_snprintf( m_szCurrentMovie, sizeof( m_szCurrentMovie ), "%s", szFilename );
+		Q_snprintf(m_szCurrentMovie, sizeof(m_szCurrentMovie), "%s", szFilename);
 	}
 }
 
-void CASW_Background_Movie::ClearCurrentMovie()
+void CHL2_Background_Movie::ClearCurrentMovie()
 {
 #ifdef ASW_BINK_MOVIES
-	if ( m_nBIKMaterial != BIKMATERIAL_INVALID )
+	if (m_nBIKMaterial != BIKMATERIAL_INVALID)
 	{
 		// FIXME: Make sure the m_pMaterial is actually destroyed at this point!
-		g_pBIK->DestroyMaterial( m_nBIKMaterial );
+		g_pBIK->DestroyMaterial(m_nBIKMaterial);
 		m_nBIKMaterial = BIKMATERIAL_INVALID;
 		m_nTextureID = -1;
 	}
 #else
-	if ( m_nAVIMaterial != AVIMATERIAL_INVALID )
+	if (m_nAVIMaterial != AVIMATERIAL_INVALID)
 	{
 		// FIXME: Make sure the m_pMaterial is actually destroyed at this point!
-		g_pAVI->DestroyAVIMaterial( m_nAVIMaterial );
+		g_pAVI->DestroyAVIMaterial(m_nAVIMaterial);
 		m_nAVIMaterial = AVIMATERIAL_INVALID;
 		m_nTextureID = -1;
 	}
 #endif
 }
 
-int CASW_Background_Movie::SetTextureMaterial()
+int CHL2_Background_Movie::SetTextureMaterial()
 {
 #ifdef ASW_BINK_MOVIES
-	if ( m_nBIKMaterial == BIKMATERIAL_INVALID )
+	if (m_nBIKMaterial == BIKMATERIAL_INVALID)
 		return -1;
 #else
-	if ( m_nAVIMaterial == AVIMATERIAL_INVALID )
+	if (m_nAVIMaterial == AVIMATERIAL_INVALID)
 		return -1;
 #endif
 
-	if ( m_nTextureID == -1 )
+	if (m_nTextureID == -1)
 	{
-		m_nTextureID = g_pMatSystemSurface->CreateNewTextureID( true );
+		m_nTextureID = g_pMatSystemSurface->CreateNewTextureID(true);
 	}
-	
+
 #ifdef ASW_BINK_MOVIES
-	g_pMatSystemSurface->DrawSetTextureMaterial( m_nTextureID, g_pBIK->GetMaterial( m_nBIKMaterial ) );
+	g_pMatSystemSurface->DrawSetTextureMaterial(m_nTextureID, g_pBIK->GetMaterial(m_nBIKMaterial));
 #else
-	g_pMatSystemSurface->DrawSetTextureMaterial( m_nTextureID, g_pAVI->GetMaterial( m_nAVIMaterial ) );
+	g_pMatSystemSurface->DrawSetTextureMaterial(m_nTextureID, g_pAVI->GetMaterial(m_nAVIMaterial));
 #endif
 	return m_nTextureID;
 }
 
-void CASW_Background_Movie::Update()
+void CHL2_Background_Movie::Update()
 {
-//	if ( engine->IsConnected() && ASWGameRules() )
+	//	if ( engine->IsConnected() && HL2GameRules() )
 	int nGameState = 0;
-	if ( nGameState != m_nLastGameState )
+	if (nGameState != m_nLastGameState)
 	{
 
-#ifdef GAMEUI_MULTI_MOVIES
-		const char *pFilename = NULL;
-		int nChosenMovie = RandomInt( 0, 3 );
-		switch( nChosenMovie )
+#ifdef GAMEIU_MULTI_MOVIES
+		const char* pFilename = NULL;
+		int nChosenMovie = RandomInt(0, 3);
+		switch (nChosenMovie)
 		{
-			case 0: pFilename = "media/bg_01.bik"; break;
-			case 1: pFilename = "media/bg_02.bik"; break;
-			default:
-			case 2: pFilename = "media/bg_03.bik"; break;
-			//case 3: pFilename = "media/bg_04.bik"; break;
+		case 0: pFilename = "media/bg_01.bik"; break;
+		case 1: pFilename = "media/bg_02.bik"; break;
+		default:
+		case 2: pFilename = "media/bg_03.bik"; break;
+		case 3: pFilename = "media/bg_04.bik"; break;
 		}
 #else
-		const char *pFilename = "media/bg_02.bik";
+		const char* pFilename = "media/bg_01.bik";
 #endif
 
-		if ( pFilename )
+		if (pFilename)
 		{
-			SetCurrentMovie( pFilename );
+			SetCurrentMovie(pFilename);
 		}
 	}
-		m_nLastGameState = nGameState;
+	m_nLastGameState = nGameState;
 
 #ifdef ASW_BINK_MOVIES
-	if ( m_nBIKMaterial == BIKMATERIAL_INVALID )
+	if (m_nBIKMaterial == BIKMATERIAL_INVALID)
 		return;
 
-	if ( g_pBIK->ReadyForSwap( m_nBIKMaterial ) )
+	if (g_pBIK->ReadyForSwap(m_nBIKMaterial))
 	{
-		if ( g_pBIK->Update( m_nBIKMaterial ) == false )
+		if (g_pBIK->Update(m_nBIKMaterial) == false)
 		{
 			// FIXME: Make sure the m_pMaterial is actually destroyed at this point!
-			g_pBIK->DestroyMaterial( m_nBIKMaterial );
+			g_pBIK->DestroyMaterial(m_nBIKMaterial);
 			m_nBIKMaterial = BIKMATERIAL_INVALID;
 		}
 	}
 #else
-	if ( m_nAVIMaterial == AVIMATERIAL_INVALID )
+	if (m_nAVIMaterial == AVIMATERIAL_INVALID)
 		return;
 
-	int nFrames = avi->GetFrameCount( m_nAVIMaterial );
-	float flTimePerFrame = 1.0f / avi->GetFrameRate( m_nAVIMaterial );
+	int nFrames = avi->GetFrameCount(m_nAVIMaterial);
+	float flTimePerFrame = 1.0f / avi->GetFrameRate(m_nAVIMaterial);
 	float flTimePassed = gpGlobals->realtime - m_flStartTime;
 	int nFramesPassed = flTimePassed / flTimePerFrame;
 	nFramesPassed = nFramesPassed % nFrames;
-	avi->SetFrame( m_nAVIMaterial, nFramesPassed );
+	avi->SetFrame(m_nAVIMaterial, nFramesPassed);
 
-// 	float flMaxU, flMaxV;
-// 	g_pAVI->GetTexCoordRange( m_nAVIMaterial, &flMaxU, &flMaxV );
+	// 	float flMaxU, flMaxV;
+	// 	g_pAVI->GetTexCoordRange( m_nAVIMaterial, &flMaxU, &flMaxV );
 #endif
 }
 
 // ======================================
 
-CNB_Header_Footer::CNB_Header_Footer( vgui::Panel *parent, const char *name ) : BaseClass( parent, name )
+CNB_Header_Footer::CNB_Header_Footer(vgui::Panel* parent, const char* name) : BaseClass(parent, name)
 {
 	// == MANAGED_MEMBER_CREATION_START: Do not edit by hand ==
-	m_pBackground = new vgui::Panel( this, "Background" );
-	m_pBackgroundImage = new vgui::ImagePanel( this, "BackgroundImage" );	
-	m_pTitle = new vgui::Label( this, "Title", "" );
-	m_pBottomBar = new vgui::Panel( this, "BottomBar" );
-	m_pBottomBarLine = new vgui::Panel( this, "BottomBarLine" );
-	m_pTopBar = new vgui::Panel( this, "TopBar" );
-	m_pTopBarLine = new vgui::Panel( this, "TopBarLine" );
+	m_pBackground = new vgui::Panel(this, "Background");
+	m_pBackgroundImage = new vgui::ImagePanel(this, "BackgroundImage");
+	m_pTitle = new vgui::Label(this, "Title", "");
+	m_pBottomBar = new vgui::Panel(this, "BottomBar");
+	m_pBottomBarLine = new vgui::Panel(this, "BottomBarLine");
+	m_pTopBar = new vgui::Panel(this, "TopBar");
+	m_pTopBarLine = new vgui::Panel(this, "TopBarLine");
 	// == MANAGED_MEMBER_CREATION_END ==
-	m_pGradientBar = new CNB_Gradient_Bar( this, "GradientBar" );
-	m_pGradientBar->SetZPos( 2 );
+	m_pGradientBar = new CNB_Gradient_Bar(this, "GradientBar");
+	m_pGradientBar->SetZPos(2);
 
 	m_bHeaderEnabled = true;
 	m_bFooterEnabled = true;
@@ -211,81 +211,81 @@ CNB_Header_Footer::~CNB_Header_Footer()
 
 }
 
-extern ConVar asw_force_background_movie;
-ConVar asw_background_color( "sdk_background_color", "16 32 46 128", FCVAR_NONE, "Color of background tinting in briefing screens" );
+extern ConVar HL2_force_background_movie;
+ConVar HL2_background_color("sdk_background_color", "16 32 46 128", FCVAR_NONE, "Color of background tinting in briefing screens");
 
-void CNB_Header_Footer::ApplySchemeSettings( vgui::IScheme *pScheme )
+void CNB_Header_Footer::ApplySchemeSettings(vgui::IScheme* pScheme)
 {
-	BaseClass::ApplySchemeSettings( pScheme );
-	
-	LoadControlSettings( "resource/ui/nb_header_footer.res" );
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	LoadControlSettings("resource/ui/nb_header_footer.res");
 
 	// TODO: Different image in widescreen to avoid stretching
 	// this image is no longer used
 	//m_pBackgroundImage->SetImage( "lobby/swarm_background01" );
 
-	switch( m_nTitleStyle )
+	switch (m_nTitleStyle)
 	{
-		case NB_TITLE_BRIGHT: m_pTitle->SetFgColor( Color( 255, 255, 255, 255 ) ); break;
-		case NB_TITLE_MEDIUM: m_pTitle->SetFgColor( Color( 47, 79, 111, 255 ) ); break;
+	case NB_TITLE_BRIGHT: m_pTitle->SetFgColor(Color(255, 255, 255, 255)); break;
+	case NB_TITLE_MEDIUM: m_pTitle->SetFgColor(Color(47, 79, 111, 255)); break;
 	}
 
-	switch( m_nBackgroundStyle )
+	switch (m_nBackgroundStyle)
 	{
-		case NB_BACKGROUND_DARK:
-			{
-				m_pBackground->SetVisible( true );
-				m_pBackgroundImage->SetVisible( false );
-				m_pBackground->SetBgColor( Color( 0, 0, 0, 230 ) );
-				break;
-			}
-		case NB_BACKGROUND_TRANSPARENT_BLUE:
-			{
-				m_pBackground->SetVisible( true );
-				m_pBackgroundImage->SetVisible( false );
-				m_pBackground->SetBgColor( asw_background_color.GetColor() );
-				break;
-			}
-		case NB_BACKGROUND_TRANSPARENT_RED:
-			{
-				m_pBackground->SetVisible( true );
-				m_pBackgroundImage->SetVisible( false );
-				m_pBackground->SetBgColor( Color( 128, 0, 0, 128 ) );
-				break;
-			}
-		case NB_BACKGROUND_BLUE:
-			{
-				m_pBackground->SetVisible( true );
-				m_pBackgroundImage->SetVisible( false );
-				m_pBackground->SetBgColor( Color( 16, 32, 46, 230 ) );
-				break;
-			}
-		case NB_BACKGROUND_IMAGE:
-			{
-				m_pBackground->SetVisible( false );
-				m_pBackgroundImage->SetVisible( true );
-				break;
-			}
-
-		case NB_BACKGROUND_NONE:
-			{
-				m_pBackground->SetVisible( false );
-				m_pBackgroundImage->SetVisible( false );
-			}
+	case NB_BACKGROUND_DARK:
+	{
+		m_pBackground->SetVisible(true);
+		m_pBackgroundImage->SetVisible(false);
+		m_pBackground->SetBgColor(Color(0, 0, 0, 230));
+		break;
+	}
+	case NB_BACKGROUND_TRANSPARENT_BLUE:
+	{
+		m_pBackground->SetVisible(true);
+		m_pBackgroundImage->SetVisible(false);
+		m_pBackground->SetBgColor(HL2_background_color.GetColor());
+		break;
+	}
+	case NB_BACKGROUND_TRANSPARENT_RED:
+	{
+		m_pBackground->SetVisible(true);
+		m_pBackgroundImage->SetVisible(false);
+		m_pBackground->SetBgColor(Color(128, 0, 0, 128));
+		break;
+	}
+	case NB_BACKGROUND_BLUE:
+	{
+		m_pBackground->SetVisible(true);
+		m_pBackgroundImage->SetVisible(false);
+		m_pBackground->SetBgColor(Color(16, 32, 46, 230));
+		break;
+	}
+	case NB_BACKGROUND_IMAGE:
+	{
+		m_pBackground->SetVisible(false);
+		m_pBackgroundImage->SetVisible(true);
+		break;
 	}
 
-	m_pTopBar->SetVisible( m_bHeaderEnabled );
-	m_pTopBarLine->SetVisible( m_bHeaderEnabled );
-	m_pBottomBar->SetVisible( m_bFooterEnabled );
-	m_pBottomBarLine->SetVisible( m_bFooterEnabled );
-	m_pGradientBar->SetVisible( m_bGradientBarEnabled );
+	case NB_BACKGROUND_NONE:
+	{
+		m_pBackground->SetVisible(false);
+		m_pBackgroundImage->SetVisible(false);
+	}
+	}
+
+	m_pTopBar->SetVisible(m_bHeaderEnabled);
+	m_pTopBarLine->SetVisible(m_bHeaderEnabled);
+	m_pBottomBar->SetVisible(m_bFooterEnabled);
+	m_pBottomBarLine->SetVisible(m_bFooterEnabled);
+	m_pGradientBar->SetVisible(m_bGradientBarEnabled);
 }
 
 void CNB_Header_Footer::PerformLayout()
 {
 	BaseClass::PerformLayout();
 
-	m_pGradientBar->SetBounds( 0, YRES( m_nGradientBarY ), ScreenWidth(), YRES( m_nGradientBarHeight ) );
+	m_pGradientBar->SetBounds(0, YRES(m_nGradientBarY), ScreenWidth(), YRES(m_nGradientBarHeight));
 }
 
 void CNB_Header_Footer::OnThink()
@@ -293,80 +293,80 @@ void CNB_Header_Footer::OnThink()
 	BaseClass::OnThink();
 }
 
-void CNB_Header_Footer::SetTitle( const char *pszTitle )
+void CNB_Header_Footer::SetTitle(const char* pszTitle)
 {
-	m_pTitle->SetText( pszTitle );
+	m_pTitle->SetText(pszTitle);
 }
 
-void CNB_Header_Footer::SetTitle( wchar_t *pwszTitle )
+void CNB_Header_Footer::SetTitle(wchar_t* pwszTitle)
 {
-	m_pTitle->SetText( pwszTitle );
+	m_pTitle->SetText(pwszTitle);
 }
 
-void CNB_Header_Footer::SetHeaderEnabled( bool bEnabled )
+void CNB_Header_Footer::SetHeaderEnabled(bool bEnabled)
 {
-	m_pTopBar->SetVisible( bEnabled );
-	m_pTopBarLine->SetVisible( bEnabled );
+	m_pTopBar->SetVisible(bEnabled);
+	m_pTopBarLine->SetVisible(bEnabled);
 	m_bHeaderEnabled = bEnabled;
 }
 
-void CNB_Header_Footer::SetFooterEnabled( bool bEnabled )
+void CNB_Header_Footer::SetFooterEnabled(bool bEnabled)
 {
-	m_pBottomBar->SetVisible( bEnabled );
-	m_pBottomBarLine->SetVisible( bEnabled );
+	m_pBottomBar->SetVisible(bEnabled);
+	m_pBottomBarLine->SetVisible(bEnabled);
 	m_bFooterEnabled = bEnabled;
 }
 
-void CNB_Header_Footer::SetGradientBarEnabled( bool bEnabled )
+void CNB_Header_Footer::SetGradientBarEnabled(bool bEnabled)
 {
-	m_pGradientBar->SetVisible( bEnabled );
+	m_pGradientBar->SetVisible(bEnabled);
 	m_bGradientBarEnabled = bEnabled;
 }
 
-void CNB_Header_Footer::SetGradientBarPos( int nY, int nHeight )
+void CNB_Header_Footer::SetGradientBarPos(int nY, int nHeight)
 {
 	m_nGradientBarY = nY;
 	m_nGradientBarHeight = nHeight;
-	m_pGradientBar->SetBounds( 0, YRES( m_nGradientBarY ), ScreenWidth(), YRES( m_nGradientBarHeight ) );
+	m_pGradientBar->SetBounds(0, YRES(m_nGradientBarY), ScreenWidth(), YRES(m_nGradientBarHeight));
 }
 
-void CNB_Header_Footer::SetTitleStyle( NB_Title_Style nTitleStyle )
+void CNB_Header_Footer::SetTitleStyle(NB_Title_Style nTitleStyle)
 {
 	m_nTitleStyle = nTitleStyle;
-	InvalidateLayout( false, true );
+	InvalidateLayout(false, true);
 }
 
-void CNB_Header_Footer::SetBackgroundStyle( NB_Background_Style nBackgroundStyle )
+void CNB_Header_Footer::SetBackgroundStyle(NB_Background_Style nBackgroundStyle)
 {
 	m_nBackgroundStyle = nBackgroundStyle;
-	InvalidateLayout( false, true );
+	InvalidateLayout(false, true);
 }
 
-void CNB_Header_Footer::SetMovieEnabled( bool bMovieEnabled )
+void CNB_Header_Footer::SetMovieEnabled(bool bMovieEnabled)
 {
 	m_bMovieEnabled = bMovieEnabled;
-	InvalidateLayout( false, true );
+	InvalidateLayout(false, true);
 }
 
 void CNB_Header_Footer::PaintBackground()
 {
 	BaseClass::PaintBackground();
 
-	if ( m_bMovieEnabled && ASWBackgroundMovie() )
+	if (m_bMovieEnabled && HL2BackgroundMovie())
 	{
-		ASWBackgroundMovie()->Update();
-		if ( ASWBackgroundMovie()->SetTextureMaterial() != -1 )
+		HL2BackgroundMovie()->Update();
+		if (HL2BackgroundMovie()->SetTextureMaterial() != -1)
 		{
-			surface()->DrawSetColor( 255, 255, 255, 255 );
+			surface()->DrawSetColor(255, 255, 255, 255);
 
 			int x, y, w, t;
-			GetBounds( x, y, w, t );
+			GetBounds(x, y, w, t);
 
 			// center, 16:10 aspect ratio
 			int width_at_ratio = t * (16.0f / 9.0f);
-			x = ( w * 0.5f ) - ( width_at_ratio * 0.5f );
-			
-			surface()->DrawTexturedRect( x, y, x + width_at_ratio, y + t );
+			x = (w * 0.5f) - (width_at_ratio * 0.5f);
+
+			surface()->DrawTexturedRect(x, y, x + width_at_ratio, y + t);
 		}
 	}
 
@@ -405,14 +405,14 @@ void CNB_Header_Footer::PaintBackground()
 
 // =================
 
-CNB_Gradient_Bar::CNB_Gradient_Bar( vgui::Panel *parent, const char *name ) : BaseClass( parent, name )
+CNB_Gradient_Bar::CNB_Gradient_Bar(vgui::Panel* parent, const char* name) : BaseClass(parent, name)
 {
 }
 
 void CNB_Gradient_Bar::PaintBackground()
 {
 	int wide, tall;
-	GetSize( wide, tall );
+	GetSize(wide, tall);
 
 	int y = 0;
 	int iHalfWide = wide * 0.5f;
@@ -420,23 +420,23 @@ void CNB_Gradient_Bar::PaintBackground()
 	float flAlpha = 200.0f / 255.0f;
 
 	// fill bar background
-	vgui::surface()->DrawSetColor( Color( 0, 0, 0, 255 * flAlpha ) );
-	vgui::surface()->DrawFilledRect( 0, y, wide, y + tall );
+	vgui::surface()->DrawSetColor(Color(0, 0, 0, 255 * flAlpha));
+	vgui::surface()->DrawFilledRect(0, y, wide, y + tall);
 
-	vgui::surface()->DrawSetColor( Color( 53, 86, 117, 255 * flAlpha ) );
+	vgui::surface()->DrawSetColor(Color(53, 86, 117, 255 * flAlpha));
 
-	int nBarPosY = y + YRES( 4 );
-	int nBarHeight = tall - YRES( 8 );
-	vgui::surface()->DrawFilledRectFade( iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true );
-	vgui::surface()->DrawFilledRectFade( 0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true );
+	int nBarPosY = y + YRES(4);
+	int nBarHeight = tall - YRES(8);
+	vgui::surface()->DrawFilledRectFade(iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true);
+	vgui::surface()->DrawFilledRectFade(0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true);
 	// draw highlights
-	nBarHeight = YRES( 2 );
+	nBarHeight = YRES(2);
 	nBarPosY = y;
-	vgui::surface()->DrawSetColor( Color( 97, 210, 255, 255 * flAlpha ) );
-	vgui::surface()->DrawFilledRectFade( iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true );
-	vgui::surface()->DrawFilledRectFade( 0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true );
+	vgui::surface()->DrawSetColor(Color(97, 210, 255, 255 * flAlpha));
+	vgui::surface()->DrawFilledRectFade(iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true);
+	vgui::surface()->DrawFilledRectFade(0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true);
 
-	nBarPosY = y + tall - YRES( 2 );
-	vgui::surface()->DrawFilledRectFade( iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true );
-	vgui::surface()->DrawFilledRectFade( 0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true );
+	nBarPosY = y + tall - YRES(2);
+	vgui::surface()->DrawFilledRectFade(iHalfWide, nBarPosY, wide, nBarPosY + nBarHeight, 255, 0, true);
+	vgui::surface()->DrawFilledRectFade(0, nBarPosY, iHalfWide, nBarPosY + nBarHeight, 0, 255, true);
 }

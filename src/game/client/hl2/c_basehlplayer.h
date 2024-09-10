@@ -15,14 +15,13 @@
 
 #include "c_baseplayer.h"
 #include "c_hl2_playerlocaldata.h"
-#include "multiplayer/basenetworkedplayer_cl.h"
 #ifdef HL2_PLAYERANIMSTATE
 #include "hl2_playeranimstate.h"
 #endif
-class C_BaseHLPlayer : public C_BaseNetworkedPlayer
+class C_BaseHLPlayer : public C_BasePlayer
 {
 public:
-	DECLARE_CLASS( C_BaseHLPlayer, C_BaseNetworkedPlayer);
+	DECLARE_CLASS( C_BaseHLPlayer, C_BasePlayer);
 	DECLARE_CLIENTCLASS();
 	DECLARE_PREDICTABLE();
 

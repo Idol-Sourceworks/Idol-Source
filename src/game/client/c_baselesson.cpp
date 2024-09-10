@@ -2585,7 +2585,11 @@ bool CScriptedIconLesson::ProcessElementAction( int iAction, bool bNot, const ch
 {
 	// First try to let the mod act on the action
 	bool bModHandled = false;
-	bool bModReturn = Mod_ProcessElementAction( iAction, bNot, pchVarName, hVar, pchParamName, fParam, pParam, pchParam, bModHandled );
+#if !defined (HL2_CLIENT_DLL)
+	bool bModReturn = Mod_ProcessElementAction(iAction, bNot, pchVarName, hVar, pchParamName, fParam, pParam, pchParam);
+#else
+	bool bModReturn = false;
+#endif
 
 	if ( bModHandled )
 	{
@@ -3728,7 +3732,7 @@ LessonEvent_t * CScriptedIconLesson::AddUpdateEvent( void )
 void CScriptedIconLesson::PreReadLessonsFromFile()
 {
 	static bool bFirstTime = true;
-	if ( !bFirstTime )
+	if (!bFirstTime)
 		return;
 	bFirstTime = false;
 
@@ -3743,78 +3747,80 @@ void CScriptedIconLesson::PreReadLessonsFromFile()
 #undef LESSON_VARIABLE_MACRO_EHANDLE
 #undef LESSON_VARIABLE_MACRO_STRING
 
-	// And build the map of variable name to enum
-	// Run string to int macros on all scriptable variables (see: LESSON_VARIABLE_FACTORY definition)
+		// And build the map of variable name to enum
+		// Run string to int macros on all scriptable variables (see: LESSON_VARIABLE_FACTORY definition)
 #define LESSON_VARIABLE_MACRO			LESSON_SCRIPT_STRING_ADD_TO_MAP
 #define LESSON_VARIABLE_MACRO_BOOL		LESSON_SCRIPT_STRING_ADD_TO_MAP
 #define LESSON_VARIABLE_MACRO_EHANDLE	LESSON_SCRIPT_STRING_ADD_TO_MAP
 #define LESSON_VARIABLE_MACRO_STRING	LESSON_SCRIPT_STRING_ADD_TO_MAP
-	LESSON_VARIABLE_FACTORY
+		LESSON_VARIABLE_FACTORY
 #undef LESSON_VARIABLE_MACRO
 #undef LESSON_VARIABLE_MACRO_BOOL
 #undef LESSON_VARIABLE_MACRO_EHANDLE
 #undef LESSON_VARIABLE_MACRO_STRING
 
-	// Set up mapping of field types
-	g_TypeToParamTypeMap.Insert( "float", FIELD_FLOAT );
-	g_TypeToParamTypeMap.Insert( "string", FIELD_STRING );
-	g_TypeToParamTypeMap.Insert( "int", FIELD_INTEGER );
-	g_TypeToParamTypeMap.Insert( "integer", FIELD_INTEGER );
-	g_TypeToParamTypeMap.Insert( "short", FIELD_INTEGER );
-	g_TypeToParamTypeMap.Insert( "long", FIELD_INTEGER );
-	g_TypeToParamTypeMap.Insert( "bool", FIELD_BOOLEAN );
-	g_TypeToParamTypeMap.Insert( "player", FIELD_CUSTOM );
-	g_TypeToParamTypeMap.Insert( "entity", FIELD_EHANDLE );
-	g_TypeToParamTypeMap.Insert( "convar", FIELD_EMBEDDED );
-	g_TypeToParamTypeMap.Insert( "void", FIELD_VOID );
+		// Set up mapping of field types
+		g_TypeToParamTypeMap.Insert("float", FIELD_FLOAT);
+	g_TypeToParamTypeMap.Insert("string", FIELD_STRING);
+	g_TypeToParamTypeMap.Insert("int", FIELD_INTEGER);
+	g_TypeToParamTypeMap.Insert("integer", FIELD_INTEGER);
+	g_TypeToParamTypeMap.Insert("short", FIELD_INTEGER);
+	g_TypeToParamTypeMap.Insert("long", FIELD_INTEGER);
+	g_TypeToParamTypeMap.Insert("bool", FIELD_BOOLEAN);
+	g_TypeToParamTypeMap.Insert("player", FIELD_CUSTOM);
+	g_TypeToParamTypeMap.Insert("entity", FIELD_EHANDLE);
+	g_TypeToParamTypeMap.Insert("convar", FIELD_EMBEDDED);
+	g_TypeToParamTypeMap.Insert("void", FIELD_VOID);
 
 	// Set up the lesson action map
-	
-	CScriptedIconLesson::LessonActionMap.Insert( "scope in", LESSON_ACTION_SCOPE_IN );
-	CScriptedIconLesson::LessonActionMap.Insert( "scope out", LESSON_ACTION_SCOPE_OUT );
-	CScriptedIconLesson::LessonActionMap.Insert( "close", LESSON_ACTION_CLOSE );
-	CScriptedIconLesson::LessonActionMap.Insert( "success", LESSON_ACTION_SUCCESS );
-	CScriptedIconLesson::LessonActionMap.Insert( "lock", LESSON_ACTION_LOCK );
-	CScriptedIconLesson::LessonActionMap.Insert( "present complete", LESSON_ACTION_PRESENT_COMPLETE );
-	CScriptedIconLesson::LessonActionMap.Insert( "present start", LESSON_ACTION_PRESENT_START );
-	CScriptedIconLesson::LessonActionMap.Insert( "present end", LESSON_ACTION_PRESENT_END );
 
-	CScriptedIconLesson::LessonActionMap.Insert( "reference open", LESSON_ACTION_REFERENCE_OPEN );
+	CScriptedIconLesson::LessonActionMap.Insert("scope in", LESSON_ACTION_SCOPE_IN);
+	CScriptedIconLesson::LessonActionMap.Insert("scope out", LESSON_ACTION_SCOPE_OUT);
+	CScriptedIconLesson::LessonActionMap.Insert("close", LESSON_ACTION_CLOSE);
+	CScriptedIconLesson::LessonActionMap.Insert("success", LESSON_ACTION_SUCCESS);
+	CScriptedIconLesson::LessonActionMap.Insert("lock", LESSON_ACTION_LOCK);
+	CScriptedIconLesson::LessonActionMap.Insert("present complete", LESSON_ACTION_PRESENT_COMPLETE);
+	CScriptedIconLesson::LessonActionMap.Insert("present start", LESSON_ACTION_PRESENT_START);
+	CScriptedIconLesson::LessonActionMap.Insert("present end", LESSON_ACTION_PRESENT_END);
 
-	CScriptedIconLesson::LessonActionMap.Insert( "set", LESSON_ACTION_SET );
-	CScriptedIconLesson::LessonActionMap.Insert( "add", LESSON_ACTION_ADD );
-	CScriptedIconLesson::LessonActionMap.Insert( "subtract", LESSON_ACTION_SUBTRACT );
-	CScriptedIconLesson::LessonActionMap.Insert( "multiply", LESSON_ACTION_MULTIPLY );
-	CScriptedIconLesson::LessonActionMap.Insert( "is", LESSON_ACTION_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "less than", LESSON_ACTION_LESS_THAN );
-	CScriptedIconLesson::LessonActionMap.Insert( "has prefix", LESSON_ACTION_HAS_PREFIX );
-	CScriptedIconLesson::LessonActionMap.Insert( "has bit", LESSON_ACTION_HAS_BIT );
-	CScriptedIconLesson::LessonActionMap.Insert( "bit count is", LESSON_ACTION_BIT_COUNT_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "bit count less than", LESSON_ACTION_BIT_COUNT_LESS_THAN );
+	CScriptedIconLesson::LessonActionMap.Insert("reference open", LESSON_ACTION_REFERENCE_OPEN);
 
-	CScriptedIconLesson::LessonActionMap.Insert( "get distance", LESSON_ACTION_GET_DISTANCE );
-	CScriptedIconLesson::LessonActionMap.Insert( "get angular distance", LESSON_ACTION_GET_ANGULAR_DISTANCE );
-	CScriptedIconLesson::LessonActionMap.Insert( "get player display name", LESSON_ACTION_GET_PLAYER_DISPLAY_NAME );
-	CScriptedIconLesson::LessonActionMap.Insert( "classname is", LESSON_ACTION_CLASSNAME_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "modelname is", LESSON_ACTION_MODELNAME_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "team is", LESSON_ACTION_TEAM_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "health less than", LESSON_ACTION_HEALTH_LESS_THAN );
-	CScriptedIconLesson::LessonActionMap.Insert( "health percentage less than", LESSON_ACTION_HEALTH_PERCENTAGE_LESS_THAN );
-	CScriptedIconLesson::LessonActionMap.Insert( "get active weapon", LESSON_ACTION_GET_ACTIVE_WEAPON );
-	CScriptedIconLesson::LessonActionMap.Insert( "weapon is", LESSON_ACTION_WEAPON_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "weapon has", LESSON_ACTION_WEAPON_HAS );
-	CScriptedIconLesson::LessonActionMap.Insert( "get active weapon slot", LESSON_ACTION_GET_ACTIVE_WEAPON_SLOT );
-	CScriptedIconLesson::LessonActionMap.Insert( "get weapon slot", LESSON_ACTION_GET_WEAPON_SLOT );
-	CScriptedIconLesson::LessonActionMap.Insert( "get weapon in slot", LESSON_ACTION_GET_WEAPON_IN_SLOT );
-	CScriptedIconLesson::LessonActionMap.Insert( "clip percentage less than", LESSON_ACTION_CLIP_PERCENTAGE_LESS_THAN);
-	CScriptedIconLesson::LessonActionMap.Insert( "weapon ammo low", LESSON_ACTION_WEAPON_AMMO_LOW );
-	CScriptedIconLesson::LessonActionMap.Insert( "weapon ammo full", LESSON_ACTION_WEAPON_AMMO_FULL );
-	CScriptedIconLesson::LessonActionMap.Insert( "weapon ammo empty", LESSON_ACTION_WEAPON_AMMO_EMPTY );
-	CScriptedIconLesson::LessonActionMap.Insert( "weapon can use", LESSON_ACTION_WEAPON_CAN_USE );
-	CScriptedIconLesson::LessonActionMap.Insert( "use target is", LESSON_ACTION_USE_TARGET_IS );
-	CScriptedIconLesson::LessonActionMap.Insert( "get use target", LESSON_ACTION_GET_USE_TARGET );
-	CScriptedIconLesson::LessonActionMap.Insert( "get potential use target", LESSON_ACTION_GET_POTENTIAL_USE_TARGET );
+	CScriptedIconLesson::LessonActionMap.Insert("set", LESSON_ACTION_SET);
+	CScriptedIconLesson::LessonActionMap.Insert("add", LESSON_ACTION_ADD);
+	CScriptedIconLesson::LessonActionMap.Insert("subtract", LESSON_ACTION_SUBTRACT);
+	CScriptedIconLesson::LessonActionMap.Insert("multiply", LESSON_ACTION_MULTIPLY);
+	CScriptedIconLesson::LessonActionMap.Insert("is", LESSON_ACTION_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("less than", LESSON_ACTION_LESS_THAN);
+	CScriptedIconLesson::LessonActionMap.Insert("has prefix", LESSON_ACTION_HAS_PREFIX);
+	CScriptedIconLesson::LessonActionMap.Insert("has bit", LESSON_ACTION_HAS_BIT);
+	CScriptedIconLesson::LessonActionMap.Insert("bit count is", LESSON_ACTION_BIT_COUNT_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("bit count less than", LESSON_ACTION_BIT_COUNT_LESS_THAN);
+
+	CScriptedIconLesson::LessonActionMap.Insert("get distance", LESSON_ACTION_GET_DISTANCE);
+	CScriptedIconLesson::LessonActionMap.Insert("get angular distance", LESSON_ACTION_GET_ANGULAR_DISTANCE);
+	CScriptedIconLesson::LessonActionMap.Insert("get player display name", LESSON_ACTION_GET_PLAYER_DISPLAY_NAME);
+	CScriptedIconLesson::LessonActionMap.Insert("classname is", LESSON_ACTION_CLASSNAME_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("modelname is", LESSON_ACTION_MODELNAME_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("team is", LESSON_ACTION_TEAM_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("health less than", LESSON_ACTION_HEALTH_LESS_THAN);
+	CScriptedIconLesson::LessonActionMap.Insert("health percentage less than", LESSON_ACTION_HEALTH_PERCENTAGE_LESS_THAN);
+	CScriptedIconLesson::LessonActionMap.Insert("get active weapon", LESSON_ACTION_GET_ACTIVE_WEAPON);
+	CScriptedIconLesson::LessonActionMap.Insert("weapon is", LESSON_ACTION_WEAPON_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("weapon has", LESSON_ACTION_WEAPON_HAS);
+	CScriptedIconLesson::LessonActionMap.Insert("get active weapon slot", LESSON_ACTION_GET_ACTIVE_WEAPON_SLOT);
+	CScriptedIconLesson::LessonActionMap.Insert("get weapon slot", LESSON_ACTION_GET_WEAPON_SLOT);
+	CScriptedIconLesson::LessonActionMap.Insert("get weapon in slot", LESSON_ACTION_GET_WEAPON_IN_SLOT);
+	CScriptedIconLesson::LessonActionMap.Insert("clip percentage less than", LESSON_ACTION_CLIP_PERCENTAGE_LESS_THAN);
+	CScriptedIconLesson::LessonActionMap.Insert("weapon ammo low", LESSON_ACTION_WEAPON_AMMO_LOW);
+	CScriptedIconLesson::LessonActionMap.Insert("weapon ammo full", LESSON_ACTION_WEAPON_AMMO_FULL);
+	CScriptedIconLesson::LessonActionMap.Insert("weapon ammo empty", LESSON_ACTION_WEAPON_AMMO_EMPTY);
+	CScriptedIconLesson::LessonActionMap.Insert("weapon can use", LESSON_ACTION_WEAPON_CAN_USE);
+	CScriptedIconLesson::LessonActionMap.Insert("use target is", LESSON_ACTION_USE_TARGET_IS);
+	CScriptedIconLesson::LessonActionMap.Insert("get use target", LESSON_ACTION_GET_USE_TARGET);
+	CScriptedIconLesson::LessonActionMap.Insert("get potential use target", LESSON_ACTION_GET_POTENTIAL_USE_TARGET);
 
 	// Add mod actions to the map
+#if !defined (HL2_CLIENT_DLL)
 	Mod_PreReadLessonsFromFile();
+#endif
 }

@@ -197,8 +197,11 @@ void C_GameInstructor::Shutdown( void )
 
 void C_GameInstructor::UpdateHiddenByOtherElements( void )
 {
+#if defined ( HL2_CLIENT_DLL )
+	bool bHidden = false;
+#else
 	bool bHidden = Mod_HiddenByOtherElements();
-
+#endif
 	if ( bHidden && !m_bHiddenDueToOtherElements )
 	{
 		StopAllLessons();
