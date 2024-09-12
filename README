@@ -3,7 +3,8 @@ Features
 
 - Source Shader Editor integration
 - Support for VS 2010-13 + 2019
-- HL2, Portal, Deferred project templates
+- Half-Life 2: Deferred
+  - Rest of the templates to be removed.
 - Fixed Hammer Editor
 - Updated engine binaries
 
