@@ -115,7 +115,7 @@ public:
 	RenderableTranslucencyType_t ComputeTranslucencyType( void );
 
 	// Should this object cast shadows?
-	virtual ShadowType_t	ShadowCastType() { return SHADOWS_NONE; }
+	virtual ShadowType_t	ShadowCastType() { return SHADOWS_SIMPLE; }
 
 	// Should this object receive shadows?
 	virtual bool			ShouldReceiveProjectedTextures( int flags )

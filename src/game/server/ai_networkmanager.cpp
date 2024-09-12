@@ -1037,16 +1037,16 @@ void CAI_NetworkManager::DelayedInit( void )
 				int status = Editor_BeginSession(STRING(gpGlobals->mapname), gpGlobals->mapversion, false);
 				if (status == Editor_NotRunning)
 				{
-					DevMsg("\nAborting map_edit\nWorldcraft not running...\n\n");
-					UTIL_CenterPrintAll( "Worldcraft not running...\n" );
+					DevMsg("\nAborting map_edit\nHammer not running...\n\n");
+					UTIL_CenterPrintAll( "Hammer not running...\n" );
 					engine->ServerCommand("disconnect\n");
 					SetThink(NULL);
 					return;
 				}
 				else if (status == Editor_BadCommand)
 				{
-					DevMsg("\nAborting map_edit\nWC/Engine map versions different...\n\n");
-					UTIL_CenterPrintAll( "WC/Engine map versions different...\n" );
+					DevMsg("\nAborting map_edit\nH/Engine map versions different...\n\n");
+					UTIL_CenterPrintAll( "H/Engine map versions different...\n" );
 					engine->ServerCommand("disconnect\n");
 					SetThink(NULL);
 					return;
@@ -1059,7 +1059,8 @@ void CAI_NetworkManager::DelayedInit( void )
 			}
 #endif
 			DevMsg( "Node Graph out of Date. Rebuilding...\n" );
-			UTIL_CenterPrintAll( "Node Graph out of Date. Rebuilding...\n" );
+			if (developer.GetBool())
+				UTIL_CenterPrintAll("Node Graph out of Date. Rebuilding...\n");
 			m_bNeedGraphRebuild = true;
 			g_pAINetworkManager->SetNextThink( gpGlobals->curtime + 1 );
 			return;
