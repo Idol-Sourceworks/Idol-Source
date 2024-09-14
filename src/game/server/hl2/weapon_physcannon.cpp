@@ -81,6 +81,7 @@ extern ConVar hl2_walkspeed;
 #define MEGACANNON_RAGDOLL_BOOGIE_SPRITE "sprites/lgtning_noz.vmt"
 
 #define	MEGACANNON_MODEL "models/weapons/v_superphyscannon.mdl"
+#define	STANDERD_MODEL "models/weapons/v_physcannon.mdl"
 #define	MEGACANNON_SKIN	1
 
 // -------------------------------------------------------------------------
@@ -2910,7 +2911,10 @@ void CWeaponPhysCannon::ItemPreFrame()
 		// This has to happen here because of how the SetModel interacts with the caching at startup
 		if ( m_sbStaticPoseParamsLoaded == false )
 		{
-			m_poseActive = LookupPoseParameter( "active" );
+			m_poseActive = LookupPoseParameter("active");
+			if (m_poseActive == NULL) {
+				Warning("Gravity gun cant find the pose pramerter \"active\"");
+			}
 			m_sbStaticPoseParamsLoaded = true;
 		}
 
@@ -3479,7 +3483,7 @@ void CWeaponPhysCannon::OpenElements( void )
 
 	m_bOpen = true;
 
-	DoEffect( EFFECT_READY );
+DoEffect( EFFECT_READY );
 }
 
 //-----------------------------------------------------------------------------
